@@ -7,8 +7,10 @@
 強調「免燒 Token、免費借雲端 GPU 算力、極速處理大檔案」，協助老師利用開源工具輕鬆解決長影音上字幕、數學動態動畫、考卷公式 OCR 與學生 iPad 互動實驗等需求。
 
 ## 2. 目前進度
-- 狀態：已建立單檔互動式入口網原型 `index.html`
-- 下一步：由 Topper 檢視視覺風格、文案與互動試算器，確認是否增減範本與案例
+- 狀態：已建立單檔互動式入口網並發布至 GitHub Pages
+- 線上公開網址：https://andytsai600-rgb.github.io/colab-portal/
+- GitHub 儲存庫：https://github.com/andytsai600-rgb/colab-portal
+- 下一步：收集現場教師試用回饋，評估是否增添一鍵開跑之 Colab 筆記本實裝範本（如 Whisper / Manim 完整 .ipynb）
 
 ## 3. 檔案清單（皆集中在本資料夾）
 - `index.html`：入口網主頁面原型（可直接在瀏覽器開啟試玩）
