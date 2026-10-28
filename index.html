@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Colab 教育者算力百寶箱 | 告別 Token 焦慮，解鎖雲端免費 GPU</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#F0F7FF',
+              100: '#E0EFFF',
+              500: '#1A73E8',
+              600: '#1557B0',
+              700: '#0D47A1',
+            },
+            accent: {
+              orange: '#F9AB00',
+              teal: '#00897B',
+              purple: '#7C3AED',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-hero {
+      background: radial-gradient(circle at 10% 20%, rgba(26, 115, 232, 0.08) 0%, rgba(255, 255, 255, 0) 60%),
+                  radial-gradient(circle at 90% 80%, rgba(249, 171, 0, 0.08) 0%, rgba(255, 255, 255, 0) 60%);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .tab-active {
+      border-bottom: 3px solid #1A73E8;
+      color: #1A73E8;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col">
+
+  <!-- 頂部導航 -->
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-500/20 font-black text-xl">
+          CO
+        </div>
+        <div>
+          <span class="font-extrabold text-lg text-slate-900 tracking-tight flex items-center gap-2">
+            Colab 算力百寶箱
+            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-brand-600 font-semibold border border-blue-200">教師與教育者特權</span>
+          </span>
+          <p class="text-xs text-slate-500 hidden sm:block">專為教學現場設計的「零 Token 免費 GPU」外掛指南</p>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="#why-colab" class="hover:text-brand-600 transition">為什麼需要 Colab？</a>
+        <a href="#calculator" class="hover:text-brand-600 transition">Token 省錢試算</a>
+        <a href="#use-cases" class="hover:text-brand-600 transition">四大教學救星</a>
+        <a href="#how-to-connect" class="hover:text-brand-600 transition">3 步驟無痛串接</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#quick-start" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm transition shadow-sm hover:shadow-md">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          一鍵開跑範本
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero 區域 -->
+  <section class="gradient-hero py-16 sm:py-24 border-b border-slate-200/60 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs sm:text-sm font-medium mb-6 animate-pulse">
+        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        別再用珍貴的 AI Token 跑粗重工作了！
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
+        本機 AI 負責<span class="text-brand-500">動腦策劃</span><br>
+        免費的 Google Colab 負責<span class="text-amber-500">出苦力！</span>
+      </h1>
+
+      <p class="mt-6 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        1 小時研習錄音轉字幕？50 頁段考題庫掃描 OCR？3Blue1Brown 級數學幾何動畫？<br class="hidden sm:inline">
+        借 Google 雲端價值數萬元的 <strong>免費 GPU 算力</strong>，<span class="text-slate-900 font-bold underline decoration-amber-400 decoration-4">0 Token 消耗、幾分鐘極速搞定</span>。
+      </p>
+
+      <!-- 核心架構對比卡片 -->
+      <div class="mt-12 max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+        <div class="p-6 rounded-2xl bg-white/90 border border-red-200 shadow-sm relative">
+          <div class="text-xs font-bold text-red-500 tracking-wide uppercase mb-2">過去的痛點</div>
+          <h3 class="font-bold text-slate-900 text-base mb-2">把大檔案硬塞給本地 AI (API)</h3>
+          <ul class="text-xs sm:text-sm text-slate-600 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✕</span> 1 小時音檔 / 大量掃描圖瞬間燒乾數十萬 Token
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✕</span> 容易觸發 Context 限制或伺服器超載被限速
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✕</span> 筆電風扇狂轉、記憶體爆滿，電腦卡死
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50/70 border-2 border-brand-500 shadow-md relative">
+          <div class="absolute -top-3 right-4 bg-brand-500 text-white text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm">
+            聰明新架構
+          </div>
+          <div class="text-xs font-bold text-brand-600 tracking-wide uppercase mb-2">Colab 協同策略</div>
+          <h3 class="font-bold text-slate-900 text-base mb-2">粗活交給雲端，精華交給 AI</h3>
+          <ul class="text-xs sm:text-sm text-slate-700 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">✓</span> <strong>0 Token 成本</strong>：在 Colab 免費跑開源模型
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">✓</span> <strong>極速產出</strong>：1 小時音檔 3 分鐘直接轉出 SRT 字幕
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">✓</span> 轉好的乾淨文字再餵給本地 AI，省下 90% 費用
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 互動試算機：Token 省錢與時間試算器 -->
+  <section id="calculator" class="py-16 bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs font-bold text-brand-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+          即時試算震撼對比
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-3">教育任務「耗能與省錢」算盤</h2>
+        <p class="text-slate-500 text-sm mt-2">拉動拉桿，看看如果改用 Google Colab，你可以省下多少 Token 與寶貴時間！</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          
+          <!-- 左側：拉桿控制區 -->
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  🎙️ 研習／公開授課錄音時數
+                </label>
+                <span id="audio-val" class="text-sm font-extrabold text-brand-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                  1 小時
+                </span>
+              </div>
+              <input id="audio-slider" type="range" min="0" max="5" step="0.5" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-500">
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>0</span>
+                <span>2.5 小時</span>
+                <span>5 小時</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  📑 掃描題庫與考卷頁數 (OCR)
+                </label>
+                <span id="ocr-val" class="text-sm font-extrabold text-brand-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                  20 頁
+                </span>
+              </div>
+              <input id="ocr-slider" type="range" min="0" max="100" step="10" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-500">
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>0</span>
+                <span>50 頁</span>
+                <span>100 頁</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  📐 數學幾何動態動畫段數 (Manim)
+                </label>
+                <span id="manim-val" class="text-sm font-extrabold text-brand-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                  2 段
+                </span>
+              </div>
+              <input id="manim-slider" type="range" min="0" max="10" step="1" value="2" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-500">
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>0</span>
+                <span>5 段</span>
+                <span>10 段</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右側：結果對比區 -->
+          <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-5">
+            <h4 class="font-bold text-slate-900 text-sm border-b pb-3 flex items-center justify-between">
+              <span>處理成效預估</span>
+              <span class="text-xs font-normal text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">免費 T4 GPU 加速</span>
+            </h4>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-red-50/70 border border-red-100">
+                <div class="text-xs text-red-600 font-semibold mb-1">若用本地 AI 塞原始檔</div>
+                <div id="token-cost" class="text-xl sm:text-2xl font-black text-red-600">~150,000</div>
+                <div class="text-xs text-red-500 mt-0.5">預估消耗 Token 額度</div>
+                <div class="text-xs text-slate-500 mt-2">耗時：<span id="local-time" class="font-bold text-slate-700">~45 分鐘 (電腦易卡死)</span></div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div class="text-xs text-emerald-700 font-semibold mb-1">改用 Google Colab</div>
+                <div class="text-xl sm:text-2xl font-black text-emerald-600">0 元 / 0 Token</div>
+                <div class="text-xs text-emerald-600 mt-0.5">開源模型免費跑</div>
+                <div class="text-xs text-slate-500 mt-2">耗時：<span id="colab-time" class="font-bold text-emerald-700 font-extrabold">約 4 分鐘</span></div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-blue-50/70 rounded-lg border border-blue-200 text-xs text-slate-700 leading-relaxed flex items-center gap-2">
+              <span class="text-lg">💡</span>
+              <span><strong>聰明結論</strong>：用 Colab 處理完後，產出的乾淨文字檔僅需 <strong>幾百個 Token</strong> 即可讓本機 AI 完成精華摘要與題目剖析！</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 四大教學救星功能展示 -->
+  <section id="use-cases" class="py-16 bg-slate-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+          教育專屬技能
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-3">Colab 能為老師與課堂做什麼？</h2>
+        <p class="text-slate-500 text-sm mt-2">不是生澀的程式碼，每一項都是解決教學現場實體痛點的實用外掛。</p>
+      </div>
+
+      <!-- 功能卡片網格 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- 卡片 1 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-brand-600 flex items-center justify-center text-2xl mb-4">
+              🎬
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">研習授課錄音轉字幕</h3>
+            <p class="text-xs text-brand-600 font-bold mb-3">開源核心：OpenAI Whisper-large-v3</p>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              1 小時親師宣講或課堂錄音，3~5 分鐘產出精準度極高的繁體中文 <strong>.srt 字幕檔</strong>。支援數學專用名詞引導，可直接丟 YouTube、Canva 或自動壓入影片中。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>輸出：.srt / .txt / 壓字 MP4</span>
+            <span class="font-bold text-emerald-600">3 分鐘完成</span>
+          </div>
+        </div>
+
+        <!-- 卡片 2 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mb-4">
+              📐
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">3Blue1Brown 級數學動畫</h3>
+            <p class="text-xs text-purple-600 font-bold mb-3">開源核心：Manim 社群版引擎</p>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              把二元一次方程式、畢氏定理拼圖證明、拋物線光學性質渲染成流暢動態短片。在 86 吋觸控大電視播放，讓抽象公式變成具象視覺！
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>輸出：1080p 60fps MP4</span>
+            <span class="font-bold text-emerald-600">不吃筆電效能</span>
+          </div>
+        </div>
+
+        <!-- 卡片 3 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mb-4">
+              📑
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">考卷掃描 OCR 轉 LaTeX</h3>
+            <p class="text-xs text-amber-600 font-bold mb-3">開源核心：Nougat / Surya 數學辨識</p>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              整份掃描考卷 PDF 自動批次轉換成純文字與標準 LaTeX 數學公式。不再需要手動輸入根號、分數與幾何符號，備課省下數小時。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>輸出：Markdown / LaTeX 代碼</span>
+            <span class="font-bold text-emerald-600">省 90% Token</span>
+          </div>
+        </div>
+
+        <!-- 卡片 4 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-4">
+              📱
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">學生 iPad 免安裝實驗室</h3>
+            <p class="text-xs text-emerald-600 font-bold mb-3">開源核心：互動式 Python Notebook</p>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              學生人手一台 iPad，點開 Safari 連結就能操作「拋硬幣 1 萬次的大數法則」、「等差數列視覺化」。免安裝任何 App，修改參數立刻呈現圖表。
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>適合：班級 iPad 分組課堂</span>
+            <span class="font-bold text-emerald-600">開箱即用</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 步驟無痛串接指南（搭配本機 Google Drive） -->
+  <section id="how-to-connect" class="py-16 bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+          無痛串接祕訣
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-3">3 步驟讓本機與 Colab 雙向互通</h2>
+        <p class="text-slate-500 text-sm mt-2">利用你電腦現有的「Google 雲端硬碟電腦版」，檔案完全無痛秒同步。</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+        
+        <!-- Step 1 -->
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative">
+          <div class="w-8 h-8 rounded-full bg-brand-500 text-white font-black flex items-center justify-center text-sm mb-4">
+            1
+          </div>
+          <h4 class="font-bold text-slate-900 text-base mb-2">本機放置素材</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            把錄音檔、影片或掃描圖，直接丟進電腦本機的 <code class="bg-white px-1.5 py-0.5 rounded border text-brand-600 font-mono text-xs">G:\我的雲端硬碟\Colab專案\</code>。
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative">
+          <div class="w-8 h-8 rounded-full bg-amber-500 text-white font-black flex items-center justify-center text-sm mb-4">
+            2
+          </div>
+          <h4 class="font-bold text-slate-900 text-base mb-2">Colab 一鍵掛載</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            在 Colab 筆記本開頭執行兩行指令，即可將你的 Google Drive 連線成雲端資料夾：
+          </p>
+          <div class="mt-3 bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono">
+            drive.mount('/content/drive')
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative">
+          <div class="w-8 h-8 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-sm mb-4">
+            3
+          </div>
+          <h4 class="font-bold text-slate-900 text-base mb-2">成果本機秒取</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Colab 算完的 <code class="bg-white px-1.5 py-0.5 rounded border text-emerald-600 font-mono text-xs">.srt 字幕</code> 或 <code class="bg-white px-1.5 py-0.5 rounded border text-emerald-600 font-mono text-xs">MP4 影片</code> 直接存入該資料夾，幾秒後你的電腦就直接看得到！
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 範本開箱區 -->
+  <section id="quick-start" class="py-16 bg-slate-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-brand-500/20 blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-2xl">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
+            準備開工
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black mt-4 leading-tight">
+            想要試跑哪一個教學任務？
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base mt-3 leading-relaxed">
+            告訴 Antigravity 你的具體任務，我會立刻為你生成**「完全設定好的 Colab 筆記本代碼」**，你只要開啟 Google Colab 貼上，按一個播放鍵就能見證速度！
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <button onclick="alert('提示：只要在對話中跟我說「幫我做一個語音轉字幕的 Colab 筆記本」，我就會為你準備好所有程式碼！')" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition shadow-lg shadow-brand-500/30 flex items-center gap-2">
+              <span>🎙️ 取得 Whisper 字幕筆記本範本</span>
+            </button>
+            <button onclick="alert('提示：只要在對話中跟我說「幫我做一個 Manim 數學動畫的 Colab 筆記本」，我就會為你準備好範例！')" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition border border-white/10 flex items-center gap-2">
+              <span>📐 取得 Manim 數學動畫範本</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 頁尾 -->
+  <footer class="mt-auto bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>Google Colab 教育者算力百寶箱 • 專為國中教學與親師研習量身打造</p>
+      <p class="mt-1">工作區持久化檔案記錄於 <code>C:\AI\notes\colab-guide-planning.md</code></p>
+    </div>
+  </footer>
+
+  <!-- 試算機互動邏輯 -->
+  <script>
+    const audioSlider = document.getElementById('audio-slider');
+    const ocrSlider = document.getElementById('ocr-slider');
+    const manimSlider = document.getElementById('manim-slider');
+
+    const audioVal = document.getElementById('audio-val');
+    const ocrVal = document.getElementById('ocr-val');
+    const manimVal = document.getElementById('manim-val');
+
+    const tokenCost = document.getElementById('token-cost');
+    const localTime = document.getElementById('local-time');
+    const colabTime = document.getElementById('colab-time');
+
+    function updateCalculator() {
+      const audio = parseFloat(audioSlider.value);
+      const ocr = parseInt(ocrSlider.value);
+      const manim = parseInt(manimSlider.value);
+
+      audioVal.textContent = audio + ' 小時';
+      ocrVal.textContent = ocr + ' 頁';
+      manimVal.textContent = manim + ' 段';
+
+      // 估算 Token (音檔轉成文字約每分鐘 200 字，如果硬丟音訊或多模態 API 消耗巨大)
+      // 音檔 1 小時約 100,000 token 負載；OCR 每頁約 2,500 token；Manim 若給 LLM 思考生成不算，若純運算則為 0
+      const tokens = Math.round((audio * 110000) + (ocr * 2600) + (manim * 1500));
+      tokenCost.textContent = '~' + tokens.toLocaleString() + ' Tokens';
+
+      // 估算本地時間 vs Colab 時間
+      const localMins = Math.round((audio * 35) + (ocr * 0.8) + (manim * 15));
+      const colabMins = Math.max(1, Math.round((audio * 3.5) + (ocr * 0.1) + (manim * 1.5)));
+
+      localTime.textContent = '~' + localMins + ' 分鐘 (風扇狂轉)';
+      colabTime.textContent = '約 ' + colabMins + ' 分鐘 (背景極速)';
+    }
+
+    audioSlider.addEventListener('input', updateCalculator);
+    ocrSlider.addEventListener('input', updateCalculator);
+    manimSlider.addEventListener('input', updateCalculator);
+
+    updateCalculator();
+  </script>
+</body>
+</html>
